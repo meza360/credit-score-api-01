@@ -3,9 +3,9 @@ using Infra;
 using Microsoft.EntityFrameworkCore;
 namespace Persistence.Relational;
 
-public class BancoUnionContext : PostgresContext
+public class BancoUnionContext : DbContext
 {
-    public BancoUnionContext(DbContextOptions<PostgresContext> options) : base(options)
+    public BancoUnionContext(DbContextOptions<BancoUnionContext> options) : base(options)
     {
     }
 

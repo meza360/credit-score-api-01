@@ -36,13 +36,14 @@ class Program
                 {
                     services.AddApplicationInsightsTelemetryWorkerService();
                     services.ConfigureFunctionsApplicationInsights();
-                    services.AddDbContext<PostgresContext>(options =>
-                        options.UseNpgsql(Environment.GetEnvironmentVariable("POSTGRES_RENAP_CONNECTION_STRING"))
+                    services.AddDbContext<SatContext>(options =>
+                        options.UseNpgsql(Environment.GetEnvironmentVariable("POSTGRES_SAT_CONNECTION_STRING"))
                     );
                     services.AddDbContext<RenapContext>(options =>
                         options.UseNpgsql(Environment.GetEnvironmentVariable("POSTGRES_RENAP_CONNECTION_STRING"))
                     );
                     services.AddSingleton<Services.Querying.Renap.Citizen>();
+                    services.AddSingleton<Services.Querying.Sat.Contributor>();
                     services.AddLogging(s =>
                     {
                         s.AddAzureWebAppDiagnostics();
