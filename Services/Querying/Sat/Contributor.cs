@@ -1,4 +1,3 @@
-using Domain.Relational.SAT;
 using Microsoft.Azure.Functions.Worker.Http;
 using Microsoft.EntityFrameworkCore;
 using Services.Core;

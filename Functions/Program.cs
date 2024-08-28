@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Newtonsoft.Json;
 using Microsoft.Extensions.Logging;
 using Microsoft.Azure.Functions.Worker.Extensions.OpenApi.Extensions;
+using Functions.Core;
 
 namespace Functions;
 
@@ -31,6 +32,7 @@ class Program
                         options.AllowSynchronousIO = true;
                     });
                     workerApp.UseNewtonsoftJson(serializeOptions);
+                    workerApp.UseMiddleware<ExceptionMiddleware>();
                 })
                 .ConfigureServices(services =>
                 {
@@ -49,9 +51,11 @@ class Program
                         s.AddAzureWebAppDiagnostics();
                         s.AddConsole();
                     });
+
                 })
                 .ConfigureOpenApi()
                 .Build();
+
 
         await host.RunAsync();
     }

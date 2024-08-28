@@ -3,7 +3,10 @@
     "Functions": {
       "commandName": "Project",
       "commandLineArgs": "--port 7033",
-      "launchBrowser": false
+      "launchBrowser": false,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      }
     }
   }
 }

@@ -1,7 +1,6 @@
 using Functions.Core;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http;
-using Persistence.Relational;
 
 namespace Functions.Querying
 {
