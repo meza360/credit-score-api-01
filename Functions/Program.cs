@@ -21,7 +21,7 @@ class Program
                 {
                     var serializeOptions = new JsonSerializerSettings
                     {
-                        ReferenceLoopHandling = ReferenceLoopHandling.Error,
+                        ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
                         NullValueHandling = NullValueHandling.Include,
                         Formatting = Formatting.Indented,
                         //TypeNameHandling = TypeNameHandling.Objects,
@@ -50,17 +50,15 @@ class Program
                     );
                     services.AddSingleton<Services.Querying.Renap.Citizen>();
                     services.AddSingleton<Services.Querying.Sat.Contributor>();
+                    services.AddSingleton<Services.Querying.EEGSA.Customer>();
                     services.AddLogging(s =>
                     {
                         s.AddAzureWebAppDiagnostics();
                         s.AddConsole();
                     });
-
                 })
                 .ConfigureOpenApi()
                 .Build();
-
-
         await host.RunAsync();
     }
 
