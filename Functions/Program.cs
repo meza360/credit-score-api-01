@@ -8,6 +8,7 @@ using Newtonsoft.Json;
 using Microsoft.Extensions.Logging;
 using Microsoft.Azure.Functions.Worker.Extensions.OpenApi.Extensions;
 using Functions.Core;
+using Infra.Env;
 
 namespace Functions;
 
@@ -39,10 +40,13 @@ class Program
                     services.AddApplicationInsightsTelemetryWorkerService();
                     services.ConfigureFunctionsApplicationInsights();
                     services.AddDbContext<SatContext>(options =>
-                        options.UseNpgsql(Environment.GetEnvironmentVariable("POSTGRES_SAT_CONNECTION_STRING"))
+                        options.UseNpgsql(SatEnv.PGSQL_SAT_DB)
                     );
                     services.AddDbContext<RenapContext>(options =>
-                        options.UseNpgsql(Environment.GetEnvironmentVariable("POSTGRES_RENAP_CONNECTION_STRING"))
+                        options.UseNpgsql(RenapEnv.PGSQL_RENAP_DB)
+                    );
+                    services.AddDbContext<EEGSAContext>(options =>
+                        options.UseNpgsql(EEGSAEnv.PGSQL_EEGSA_DB)
                     );
                     services.AddSingleton<Services.Querying.Renap.Citizen>();
                     services.AddSingleton<Services.Querying.Sat.Contributor>();
