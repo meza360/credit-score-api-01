@@ -19,7 +19,8 @@ public class BaseFunction
         var s = new JsonSerializerSettings
         {
             NullValueHandling = NullValueHandling.Ignore,
-            ContractResolver = new CamelCasePropertyNamesContractResolver()
+            ContractResolver = new CamelCasePropertyNamesContractResolver(),
+            ReferenceLoopHandling = ReferenceLoopHandling.Ignore
         };
         var serializer = new NewtonsoftJsonObjectSerializer(s);
         context.GetLogger("BaseFunction").LogInformation("Handling result");
