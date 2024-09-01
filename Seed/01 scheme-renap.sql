@@ -15,7 +15,7 @@ CREATE DATABASE IF NOT EXISTS renap
 
 -- Creacion de tabla unica de personas
 
-CREATE TABLE IF NOT EXISTS CITIZEN
+CREATE TABLE IF NOT EXISTS TBL_CITIZEN
 (
     id serial NOT NULL,
     cui character varying(13) COLLATE pg_catalog."default" NOT NULL,
@@ -23,7 +23,7 @@ CREATE TABLE IF NOT EXISTS CITIZEN
     last_name character varying(70) COLLATE pg_catalog."default" NOT NULL,
     date_of_birth date NOT NULL,
     date_of_decease date DEFAULT NULL,
-    nationality character varying(50) COLLATE pg_catalog."default" DEFAULT "Guatemalteco/a" NOT NULL,
+    nationality character varying(50) COLLATE pg_catalog."default" DEFAULT 'Guatemalteco/a' NOT NULL,
     CONSTRAINT citizen_pkey PRIMARY KEY (id),
     CONSTRAINT cui_unique UNIQUE (cui)
 );

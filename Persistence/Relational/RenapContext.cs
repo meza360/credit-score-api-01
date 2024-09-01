@@ -15,7 +15,7 @@ public class RenapContext : DbContext
     {
         modelBuilder.Entity<Citizen>(entity =>
         {
-            entity.ToTable("citizen");
+            entity.ToTable("tbl_citizen");
             entity.HasKey(e => e.Id);
             entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.Id).ValueGeneratedOnAdd();

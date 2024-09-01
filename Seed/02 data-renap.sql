@@ -1,6 +1,6 @@
 -- insert a citizen into citizen table using postgres sintax
 
-INSERT INTO CITIZEN (cui, first_name, last_name, date_of_birth, date_of_decease, nationality)
+INSERT INTO TBL_CITIZEN (cui, first_name, last_name, date_of_birth, date_of_decease, nationality)
 VALUES 
 ('1234567890123', 'John', 'Doe', '1990-01-13', NULL, 'Guatemalteco/a'),
 ('9876543210987', 'Jane', 'Smith', '1985-05-20', NULL, 'Guatemalteco/a'),
