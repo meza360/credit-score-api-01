@@ -1,14 +1,14 @@
 -- 02 data-sat-tributario
 
 -- DROP TABLE IF EXISTS tbl_regime;
-INSERT INTO tbl_regime (name, description)
+INSERT INTO sat.tbl_regime (name, description)
 VALUES 
     ('General', '12% sobre compras y paga formulario SAT-2237'),
     ('Pequeño contribuyente', 'Rinde el 5% mensual de ventas y presenta formulario SAT-2046'),
     ('Asalariado', 'Con obligacion del patrono');
 
 -- DROP TABLE IF EXISTS tbl_contributor;
-INSERT INTO tbl_contributor (nit, first_name, last_name, cui, date_of_birth, nationality, email, regime_id)
+INSERT INTO sat.tbl_contributor (nit, first_name, last_name, cui, date_of_birth, nationality, email, regime_id)
 VALUES 
     ('12345678', 'John', 'Doe', '1234567890123', '1990-01-13', 'American', 'john.doe@example.com', 1),
     ('87654321', 'Jane', 'Smith', '9876543210987', '1985-05-20', 'British', 'jane.smith@example.com', 2),
@@ -35,7 +35,7 @@ WITH RECURSIVE months AS (
         month > CURRENT_DATE - INTERVAL '15 years'
 )
 -- WITH EACH MONTH GENERATE A ROW FOR contributor with id 87654321
-INSERT INTO tbl_statement (statement_type, issue_date, statement_overdue, statement_month, statement_year, statement_amount, regime_id, contributor_id)
+INSERT INTO sat.tbl_statement (statement_type, issue_date, statement_overdue, statement_month, statement_year, statement_amount, regime_id, contributor_id)
 SELECT 
     'SAT-2046', 
     month,
@@ -63,8 +63,8 @@ DO $$DECLARE
 	ccontributor RECORD;
 BEGIN
 
-FOR ccontributor IN (SELECT statement_id, statement_amount, statement_month, statement_year,issue_date FROM tbl_statement WHERE contributor_id = 2) LOOP
-    INSERT INTO tbl_payment (payment_date, payment_amount, statement_id)
+FOR ccontributor IN (SELECT statement_id, statement_amount, statement_month, statement_year,issue_date FROM sat.tbl_statement WHERE contributor_id = 2) LOOP
+    INSERT INTO sat.tbl_payment (payment_date, payment_amount, statement_id)
 	VALUES (
 	(MAKE_DATE(ccontributor.statement_year, ccontributor.statement_month, 10)
 	),ccontributor.statement_amount,ccontributor.statement_id);
@@ -85,7 +85,7 @@ WITH RECURSIVE months AS (
         month > CURRENT_DATE - INTERVAL '10 years'
 )
 -- WITH EACH MONTH GENERATE A ROW FOR contributor with id 87654321
-INSERT INTO tbl_statement (statement_type, issue_date, statement_overdue, statement_month, statement_year, statement_amount, regime_id, contributor_id)
+INSERT INTO sat.tbl_statement (statement_type, issue_date, statement_overdue, statement_month, statement_year, statement_amount, regime_id, contributor_id)
 SELECT 
     'SAT-2046', 
     month,
@@ -109,8 +109,8 @@ DO $$DECLARE
 	ccontributor RECORD;
 BEGIN
 
-FOR ccontributor IN (SELECT statement_id, statement_amount, statement_month, statement_year,issue_date FROM tbl_statement WHERE contributor_id = 4) LOOP
-    INSERT INTO tbl_payment (payment_date, payment_amount, statement_id)
+FOR ccontributor IN (SELECT statement_id, statement_amount, statement_month, statement_year,issue_date FROM sat.tbl_statement WHERE contributor_id = 4) LOOP
+    INSERT INTO sat.tbl_payment (payment_date, payment_amount, statement_id)
 	VALUES (
         (CASE
             WHEN ccontributor.statement_month = 12 THEN (MAKE_DATE(ccontributor.statement_year, ccontributor.statement_month, CAST(random()*(28-1) + 1 AS INTEGER)))

@@ -1,7 +1,7 @@
 
 -- insert data into customer table
 
-INSERT INTO TBL_CUSTOMER (cui, first_name, last_name, date_of_birth)
+INSERT INTO eegsa.TBL_CUSTOMER (cui, first_name, last_name, date_of_birth)
 VALUES 
 ('1234567890123', 'John', 'Doe', '1990-01-13'),
 ('9876543210987', 'Jane', 'Smith', '1985-05-20'),
@@ -17,7 +17,7 @@ VALUES
 
 -- insert data into contract table
 
-INSERT INTO TBL_CONTRACT (customer_id, is_active)
+INSERT INTO eegsa.TBL_CONTRACT (customer_id, is_active)
 VALUES 
 (1,true),
 (1, false),
@@ -54,7 +54,7 @@ WITH RECURSIVE months AS (
         month > CURRENT_DATE - INTERVAL '15 years'
 )
 -- WITH EACH MONTH GENERATE A ROW FOR bills for customer 1 contract 1
-INSERT INTO TBL_BILL (bill_type, issue_date, due_date, bill_overdue, days_overdue, contract_id, bill_amount)
+INSERT INTO eegsa.TBL_BILL (bill_type, issue_date, due_date, bill_overdue, days_overdue, contract_id, bill_amount)
 SELECT 
     'Electricity', 
     month,
@@ -68,7 +68,7 @@ SELECT
         WHEN (FLOOR(random() * 1)) = 1 THEN FLOOR(random() * 30)
         WHEN (FLOOR(random() * 0)) = 0 THEN 0
     END),
-    3,
+    1,
     random() * 10000
      -- Generate a random number from 0 to 10000
 FROM
@@ -82,8 +82,8 @@ DO $$DECLARE
     cbill RECORD;
 BEGIN
 
-FOR cbill IN (SELECT id, bill_amount, bill_overdue, issue_date, due_date FROM tbl_bill WHERE contract_id = 1) LOOP
-    INSERT INTO tbl_payment (payment_date, payment_amount, bill_id)
+FOR cbill IN (SELECT id, bill_amount, bill_overdue, issue_date, due_date FROM eegsa.tbl_bill WHERE contract_id = 1) LOOP
+    INSERT INTO eegsa.tbl_payment (payment_date, payment_amount, bill_id)
     VALUES (
     (CASE
     -- cuando es diciembre, y la factura esta vencida

@@ -14,7 +14,7 @@ CREATE DATABASE IF NOT EXISTS sat
     IS_TEMPLATE = False;
 
 -- Table: public.regime
-CREATE TABLE IF NOT EXISTS tbl_regime(
+CREATE TABLE IF NOT EXISTS sat.tbl_regime(
     id serial NOT NULL,
     name varchar(100) NOT NULL,
     description varchar(255) NOT NULL,
@@ -23,7 +23,7 @@ CREATE TABLE IF NOT EXISTS tbl_regime(
 
 -- Creacion de tabla unica de contribuyentes
 
-CREATE TABLE IF NOT EXISTS tbl_contributor(
+CREATE TABLE IF NOT EXISTS sat.tbl_contributor(
     id serial NOT NULL,
     nit varchar(8) NOT NULL,
     first_name varchar(100) NOT NULL,
@@ -35,7 +35,7 @@ CREATE TABLE IF NOT EXISTS tbl_contributor(
     regime_id integer NOT NULL,
     CONSTRAINT contributor_pkey PRIMARY KEY (id),
     CONSTRAINT contributor_regime_id_fkey FOREIGN KEY (regime_id)
-        REFERENCES tbl_regime (id)
+        REFERENCES sat.tbl_regime (id)
         ON UPDATE SET NULL
         ON DELETE SET NULL,
 	CONSTRAINT cui_unique UNIQUE(cui),
@@ -44,7 +44,7 @@ CREATE TABLE IF NOT EXISTS tbl_contributor(
 
 -- creacion de tabal de declaraciones
 
-CREATE TABLE IF NOT EXISTS tbl_statement(
+CREATE TABLE IF NOT EXISTS sat.tbl_statement(
     statement_id serial NOT NULL,
     statement_type varchar(10) NOT NULL,
     issue_date date NOT NULL,
@@ -56,23 +56,23 @@ CREATE TABLE IF NOT EXISTS tbl_statement(
     contributor_id integer NOT NULL,
     CONSTRAINT statement_pkey PRIMARY KEY (statement_id),
     CONSTRAINT statement_regime_id_fkey FOREIGN KEY (regime_id)
-        REFERENCES tbl_regime (id)
+        REFERENCES sat.tbl_regime (id)
         ON UPDATE SET NULL
         ON DELETE SET NULL,
     CONSTRAINT statement_contributor_id_fkey FOREIGN KEY (contributor_id)
-        REFERENCES tbl_contributor (id)
+        REFERENCES sat.tbl_contributor (id)
         ON UPDATE CASCADE
         ON DELETE SET NULL
 );
 
-CREATE TABLE IF NOT EXISTS tbl_payment(
+CREATE TABLE IF NOT EXISTS sat.tbl_payment(
     payment_id serial NOT NULL,
     payment_date date NOT NULL,
     payment_amount numeric(10,2) NOT NULL,
     statement_id integer NOT NULL,
     CONSTRAINT payment_pkey PRIMARY KEY (payment_id),
     CONSTRAINT payment_statement_id_fkey FOREIGN KEY (statement_id)
-        REFERENCES tbl_statement (statement_id) 
+        REFERENCES sat.tbl_statement (statement_id) 
         ON UPDATE CASCADE
         ON DELETE SET NULL
 );

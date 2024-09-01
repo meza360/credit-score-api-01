@@ -15,7 +15,7 @@ CREATE DATABASE IF NOT EXISTS renap
 
 -- Creacion de tabla unica de personas
 
-CREATE TABLE IF NOT EXISTS TBL_CITIZEN
+CREATE TABLE IF NOT EXISTS renap.TBL_CITIZEN
 (
     id serial NOT NULL,
     cui character varying(13) COLLATE pg_catalog."default" NOT NULL,

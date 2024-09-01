@@ -13,7 +13,7 @@ GRANT CONNECT, CREATE ON DATABASE eegsa TO "PROJG2";
 
 -- create customer table
 
-CREATE TABLE IF NOT EXISTS TBL_CUSTOMER
+CREATE TABLE IF NOT EXISTS eegsa.TBL_CUSTOMER
 (
     id serial NOT NULL,
     cui character varying(13) COLLATE pg_catalog."default" NOT NULL,
@@ -23,19 +23,19 @@ CREATE TABLE IF NOT EXISTS TBL_CUSTOMER
     CONSTRAINT tbl_customer_pkey PRIMARY KEY (id)
 );
 
-CREATE TABLE IF NOT EXISTS TBL_CONTRACT
+CREATE TABLE IF NOT EXISTS eegsa.TBL_CONTRACT
 (
     id serial NOT NULL,
     customer_id integer NOT NULL,
     is_active boolean NOT NULL DEFAULT true,
     CONSTRAINT tbl_contract_pkey PRIMARY KEY (id),
     CONSTRAINT tbl_contract_customer_id_fkey FOREIGN KEY (customer_id)
-        REFERENCES TBL_CUSTOMER (id)
+        REFERENCES eegsa.TBL_CUSTOMER (id)
         ON UPDATE CASCADE
         ON DELETE NO ACTION
 );
 
-CREATE TABLE IF NOT EXISTS TBL_BILL
+CREATE TABLE IF NOT EXISTS eegsa.TBL_BILL
 (
     id serial NOT NULL,
     bill_type character varying(100) COLLATE pg_catalog."default" NOT NULL,
@@ -47,12 +47,12 @@ CREATE TABLE IF NOT EXISTS TBL_BILL
     bill_amount numeric(10,2) NOT NULL,
     CONSTRAINT tbl_bill_pkey PRIMARY KEY (id),
     CONSTRAINT tbl_bill_contract_id_fkey FOREIGN KEY (contract_id)
-        REFERENCES TBL_CONTRACT (id)
+        REFERENCES eegsa.TBL_CONTRACT (id)
         ON UPDATE CASCADE
         ON DELETE NO ACTION
 );
 
-CREATE TABLE IF NOT EXISTS TBL_PAYMENT
+CREATE TABLE IF NOT EXISTS eegsa.TBL_PAYMENT
 (
     id serial NOT NULL,
     payment_date date NOT NULL,
@@ -60,7 +60,7 @@ CREATE TABLE IF NOT EXISTS TBL_PAYMENT
     bill_id integer NOT NULL,
     CONSTRAINT tbl_payment_pkey PRIMARY KEY (id),
     CONSTRAINT tbl_payment_bill_id_fkey FOREIGN KEY (id)
-        REFERENCES TBL_BILL (id)
+        REFERENCES eegsa.TBL_BILL (id)
         ON UPDATE CASCADE
         ON DELETE NO ACTION
 );
