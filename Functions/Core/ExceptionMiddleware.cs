@@ -25,7 +25,7 @@ namespace Functions.Core
             _env = env;
             _serializeOptions = new JsonSerializerSettings
             {
-                ReferenceLoopHandling = ReferenceLoopHandling.Error,
+                ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
                 NullValueHandling = NullValueHandling.Include,
                 Formatting = Formatting.Indented,
                 // camel case property names
@@ -41,7 +41,8 @@ namespace Functions.Core
             }
             catch (Exception ex)
             {
-                _logger.LogError("\n\nError en la invocacion del metodo", ex.Message);
+                _logger.LogError("\n\nError en la invocacion del metodo: {0}", ex.Message);
+                _logger.LogError("\n\nStackTrace: {0}", ex.StackTrace);
                 var req = await context.GetHttpRequestDataAsync();
                 var newResponse = req.CreateResponse(HttpStatusCode.Conflict);
                 var appException = _env.IsDevelopment()
