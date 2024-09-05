@@ -48,9 +48,13 @@ class Program
                     services.AddDbContext<EEGSAContext>(options =>
                         options.UseNpgsql(EEGSAEnv.PGSQL_EEGSA_DB)
                     );
+                    services.AddDbContext<BancoUnionContext>(options =>
+                        options.UseNpgsql(BancoUnionEnv.PGSQL_BANCOUNION_DB)
+                    );
                     services.AddSingleton<Services.Querying.Renap.Citizen>();
                     services.AddSingleton<Services.Querying.Sat.Contributor>();
                     services.AddSingleton<Services.Querying.EEGSA.Customer>();
+                    services.AddSingleton<Services.Querying.BancoUnion.Customer>();
                     services.AddLogging(s =>
                     {
                         s.AddAzureWebAppDiagnostics();

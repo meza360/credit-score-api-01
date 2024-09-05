@@ -1,2 +1,5 @@
 ﻿namespace Domain.Relational.BancoUnion;
-public class Customer { }
+public class Customer : Domain.Relational.Banco.Customer
+{
+
+}
