@@ -76,3 +76,17 @@ CREATE TABLE IF NOT EXISTS sat.tbl_payment(
         ON UPDATE CASCADE
         ON DELETE SET NULL
 );
+
+
+-- tabla de facturas emitidas a nombre del contribuyente
+CREATE TABLE IF NOT EXISTS sat.tbl_imposition(
+    id serial NOT NULL,
+    payment_date date NOT NULL,
+    payment_amount numeric(10,2) NOT NULL,
+    contributor_id integer NOT NULL,
+    CONSTRAINT imposition_pkey PRIMARY KEY (id),
+    CONSTRAINT imposition_contributor_id_fkey FOREIGN KEY (contributor_id)
+        REFERENCES sat.tbl_contributor (id)
+        ON UPDATE CASCADE
+        ON DELETE SET NULL
+);

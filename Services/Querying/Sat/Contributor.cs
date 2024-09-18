@@ -16,5 +16,15 @@ namespace Services.Querying.Sat
         {
             return Result<List<Domain.Relational.SAT.Contributor>>.Success(await _context.Contributors.ToListAsync());
         }
+
+        public async Task<Result<List<Domain.Relational.SAT.Contributor>>> ListAllContributorsWithImposition(HttpRequestData req)
+        {
+            return Result<List<Domain.Relational.SAT.Contributor>>
+            .Success(
+                await _context.Contributors?
+                .Include(c => c.Impositions)
+                .ToListAsync()
+                );
+        }
     }
 }
