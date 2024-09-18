@@ -13,11 +13,30 @@ namespace Functions.Querying
             _contributorService = service;
         }
 
+        /// <summary>
+        /// This function is used to list all contributors with no extra level of detail
+        /// </summary>
+        /// <param name="req"></param>
+        /// <param name="context"></param>
+        /// <returns></returns>
         [Function(nameof(ContributorList))]
         public async Task<HttpResponseData> ContributorList(
             [HttpTrigger(AuthorizationLevel.Function, "get", Route = $"{basePath}/contributor")] HttpRequestData req, FunctionContext context)
         {
             return await HandleResult<List<Domain.Relational.SAT.Contributor>>(await _contributorService.ListAll(req), req, context);
+        }
+
+        /// <summary>
+        /// This function is used to list all contributors with impositions
+        /// </summary>
+        /// <param name="req"></param>
+        /// <param name="context"></param>
+        /// <returns></returns>
+        [Function(nameof(ContributorListWithImpositions))]
+        public async Task<HttpResponseData> ContributorListWithImpositions(
+            [HttpTrigger(AuthorizationLevel.Function, "get", Route = $"{basePath}/contributor/impositions")] HttpRequestData req, FunctionContext context)
+        {
+            return await HandleResult<List<Domain.Relational.SAT.Contributor>>(await _contributorService.ListAllContributorsWithImposition(req), req, context);
         }
 
     }

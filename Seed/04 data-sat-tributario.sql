@@ -120,3 +120,53 @@ FOR ccontributor IN (SELECT statement_id, statement_amount, statement_month, sta
 END LOOP;
 
 END$$;
+
+
+--- insert data for tbl_imposition contributor id 1
+
+WITH RECURSIVE months AS (
+    SELECT 
+        DATE_TRUNC('month', CURRENT_DATE) AS month
+    UNION ALL
+    SELECT 
+        month - INTERVAL '1 month'
+    FROM 
+        months
+    WHERE 
+        month > CURRENT_DATE - INTERVAL '10 years'
+)
+-- WITH EACH MONTH GENERATE A ROW FOR contributor with id 1
+INSERT INTO sat.tbl_imposition (payment_date, payment_amount, contributor_id)
+SELECT 
+    month,
+    random() * 5000, -- Generate a random number from 0 to 10000
+    1
+FROM
+    months
+ORDER BY
+    month;
+
+
+--- insert data for tbl_imposition contributor id 2
+
+WITH RECURSIVE months AS (
+    SELECT 
+        DATE_TRUNC('month', CURRENT_DATE) AS month
+    UNION ALL
+    SELECT 
+        month - INTERVAL '1 month'
+    FROM 
+        months
+    WHERE 
+        month > CURRENT_DATE - INTERVAL '15 years'
+)
+-- WITH EACH MONTH GENERATE A ROW FOR contributor with id 1
+INSERT INTO sat.tbl_imposition (payment_date, payment_amount, contributor_id)
+SELECT 
+    month,
+    random() * 8000, -- Generate a random number from 0 to 10000
+    2
+FROM
+    months
+ORDER BY
+    month;

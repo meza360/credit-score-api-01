@@ -80,5 +80,20 @@ public class SatContext : DbContext
         //.WithOne(s => s.Payment);
         //.WithMany(s => s.Payments)
         //.HasForeignKey(p => p.StatementId);
+
+        modelBuilder.Entity<Domain.Relational.SAT.Imposition>(imposition =>
+        {
+            imposition.ToTable("tbl_imposition");
+            imposition.Property(e => e.Id).HasColumnName("id");
+            imposition.Property(e => e.Id).ValueGeneratedOnAdd();
+            imposition.Property(e => e.PaymentAmount).HasColumnName("payment_amount").IsRequired();
+            imposition.Property(e => e.PaymentDate).HasColumnName("payment_date").IsRequired();
+            imposition.Property(e => e.ContributorId).HasColumnName("contributor_id").IsRequired();
+        });
+
+        modelBuilder.Entity<Domain.Relational.SAT.Imposition>()
+            .HasOne(i => i.Contributor)
+            .WithMany(c => c.Impositions)
+            .HasForeignKey(i => i.ContributorId);
     }
 }

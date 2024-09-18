@@ -13,6 +13,7 @@ namespace Domain.Relational.SAT
         public List<Statement> Statements { get; set; }
         public Regime Regime { get; set; }
         public int RegimeId { get; set; }
+        public List<Imposition> Impositions { get; set; }
     }
 }
 
