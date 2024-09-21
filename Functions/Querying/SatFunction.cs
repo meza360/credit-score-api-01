@@ -39,5 +39,18 @@ namespace Functions.Querying
             return await HandleResult<List<Domain.Relational.SAT.Contributor>>(await _contributorService.ListAllContributorsWithImposition(req), req, context);
         }
 
+        /// <summary>
+        /// This function is used to list all contributors with impositions
+        /// </summary>
+        /// <param name="req"></param>
+        /// <param name="context"></param>
+        /// <returns></returns>
+        [Function(nameof(ContributorListReport))]
+        public async Task<HttpResponseData> ContributorListReport(
+            [HttpTrigger(AuthorizationLevel.Function, "get", Route = $"{basePath}/contributor/credit-score")] HttpRequestData req, FunctionContext context)
+        {
+            return await HandleResult<Domain.NoSQL.SAT.Contributor>(await _contributorService.ListAllContributorsReport(req), req, context);
+        }
+
     }
 }
