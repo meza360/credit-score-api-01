@@ -9,6 +9,8 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Azure.Functions.Worker.Extensions.OpenApi.Extensions;
 using Functions.Core;
 using Infra.Env;
+using Persistence.NoSQL;
+using Infra;
 
 namespace Functions;
 
@@ -39,6 +41,8 @@ class Program
                 {
                     services.AddApplicationInsightsTelemetryWorkerService();
                     services.ConfigureFunctionsApplicationInsights();
+                    services.AddSingleton<CosmosEnv>();
+                    services.AddTransient<CosmosContext>();
                     services.AddDbContext<SatContext>(options =>
                         options.UseNpgsql(SatEnv.PGSQL_SAT_DB)
                     );
@@ -53,6 +57,7 @@ class Program
                     );
                     services.AddSingleton<Services.Querying.Renap.Citizen>();
                     services.AddSingleton<Services.Querying.Sat.Contributor>();
+                    services.AddSingleton<Services.ETL.Sat.ContributorETL>();
                     services.AddSingleton<Services.Querying.EEGSA.Customer>();
                     services.AddSingleton<Services.Querying.BancoUnion.Customer>();
                     services.AddLogging(s =>

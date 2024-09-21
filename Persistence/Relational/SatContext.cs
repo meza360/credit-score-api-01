@@ -12,6 +12,7 @@ public class SatContext : DbContext
     public DbSet<Domain.Relational.SAT.Regime> Regimes { get; set; }
     public DbSet<Domain.Relational.SAT.Statement> Statements { get; set; }
     public DbSet<Domain.Relational.SAT.Payment> Payments { get; set; }
+    public DbSet<Domain.Relational.SAT.Imposition> Impositions { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
