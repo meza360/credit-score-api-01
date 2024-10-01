@@ -62,7 +62,8 @@ namespace Services.ETL.Sat
                                     Year = s.StatementYear,
                                     Month = s.StatementMonth,
                                     WasDue = s.StatementOverdue,
-                                    DaysOverdue = 1
+                                    DaysOverdue = 1,
+                                    StatementAmount = s.StatementAmount
                                 }
                             );
 

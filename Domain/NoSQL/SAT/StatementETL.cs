@@ -15,5 +15,6 @@ namespace Domain.NoSQL.SAT
         public int Year { get; set; }
         public bool? WasDue { get; set; }
         public int? DaysOverdue { get; set; }
+        public double StatementAmount { get; set; }
     }
 }
