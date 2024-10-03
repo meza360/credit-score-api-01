@@ -58,6 +58,91 @@ namespace Services.Querying.Sat
                 );
         }
 
+        public async Task<Result<List<Domain.Relational.SAT.Contributor>>> ListAllContributorsWithImpositionAndPayments()
+        {
+
+            List<Domain.Relational.SAT.Contributor> contributors = await _context.Contributors?
+                            .Include(c => c.Statements)
+                            .Include(c => c.Impositions)
+                            .ToListAsync();
+
+            //double totalDebt = 0;
+            contributors.ForEach(c =>
+            {
+                c.Statements.ForEach(s =>
+                {
+                    s.Payment = GetPaymentByStatementId(s.StatementId).Result.Value;
+                    /* .Result
+                    .Value
+                    .ForEach(p =>
+                    {
+                        totalDebt += s.StatementAmount - p.PaymentAmount;
+                    }); */
+
+                });
+            });
+
+            return Result<List<Domain.Relational.SAT.Contributor>>
+            .Success(contributors);
+        }
+        public async Task<Result<List<Domain.Relational.SAT.Contributor>>> ListAllContributorsWithImpositionAndPayments(HttpRequestData req)
+        {
+
+            List<Domain.Relational.SAT.Contributor> contributors = await _context.Contributors?
+                            .Include(c => c.Statements)
+                            .Include(c => c.Impositions)
+                            .ToListAsync();
+
+            //double totalDebt = 0;
+            contributors.ForEach(c =>
+            {
+                c.Statements.ForEach(s =>
+                {
+                    s.Payment = GetPaymentByStatementId(s.StatementId).Result.Value;
+                    /* .Result
+                    .Value
+                    .ForEach(p =>
+                    {
+                        totalDebt += s.StatementAmount - p.PaymentAmount;
+                    }); */
+
+                });
+            });
+
+            return Result<List<Domain.Relational.SAT.Contributor>>
+            .Success(contributors);
+        }
+
+        public async Task<Result<Domain.Relational.SAT.Payment>> GetPaymentByStatementId(int statementId)
+        {
+            return Result<Domain.Relational.SAT.Payment>
+            .Success(
+                await _context.Payments.FindAsync(statementId)
+                );
+        }
+
+        public async Task<Result<List<Domain.Relational.SAT.Payment>>> ListAllPaymentsFromStatement(HttpRequestData req)
+        {
+            return Result<List<Domain.Relational.SAT.Payment>>
+            .Success(
+                await _context.Payments?
+                .Include(pay => pay.Statement)
+                .Include(c => c.Statement.Contributor.Impositions)
+                //.Include(stat => stat.Statement.Contributor)
+                .ToListAsync()
+                );
+        }
+
+        public async Task<Result<List<Domain.Relational.SAT.Payment>>> ListAllPaymentsFromStatement(string statementId)
+        {
+            return Result<List<Domain.Relational.SAT.Payment>>
+            .Success(
+                await _context.Payments?
+                .Where(pay => pay.StatementId == int.Parse(statementId))
+                .ToListAsync()
+                );
+        }
+
         public async Task<Result<Domain.NoSQL.SAT.Contributor>> ListAllContributorsReport(HttpRequestData req)
         {
             string? searchMethod = "";
