@@ -19,7 +19,7 @@ namespace Functions.ETL.SAT
 
         [Function(nameof(TransformToMonthlyImpositions))]
         public async Task<HttpResponseData> TransformToMonthlyImpositions(
-            [HttpTrigger(AuthorizationLevel.Function, "get", Route = $"{basePath}/contributor/impositions")] HttpRequestData req, FunctionContext context
+            [HttpTrigger(AuthorizationLevel.Function, "get", Route = $"{basePath}/contributor")] HttpRequestData req, FunctionContext context
         )
         {
             return await HandleResult<List<Domain.NoSQL.SAT.Contributor>?>(await _constributorService.TransformToMonthlyImpositions(), req, context);
