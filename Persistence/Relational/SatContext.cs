@@ -23,9 +23,9 @@ public class SatContext : DbContext
             entity.Property(e => e.FirstName).HasColumnName("first_name").IsRequired();
             entity.Property(e => e.LastName).HasColumnName("last_name").IsRequired();
             entity.Property(e => e.DateOfBirth).HasColumnName("date_of_birth").IsRequired();
-            entity.Property(e => e.CUI).HasColumnName("cui").IsRequired();
+            entity.Property(e => e.Cui).HasColumnName("cui").IsRequired();
             entity.Property(e => e.Email).HasColumnName("email");
-            entity.Property(e => e.NIT).HasColumnName("nit").IsRequired();
+            entity.Property(e => e.Nit).HasColumnName("nit").IsRequired();
             entity.Property(e => e.Nationality).HasColumnName("nationality").IsRequired();
             entity.Property(e => e.RegimeId).HasColumnName("regime_id").IsRequired();
         });

@@ -20,7 +20,7 @@ namespace Services.Querying.BancoUnion
         }
         public async Task<Result<Domain.Relational.BancoUnion.Customer>> GetCustomerByCUI(HttpRequestData req, string cui)
         {
-            return Result<Domain.Relational.BancoUnion.Customer>.Success(await _context.Customers.FirstOrDefaultAsync(c => c.CUI == cui));
+            return Result<Domain.Relational.BancoUnion.Customer>.Success(await _context.Customers.FirstOrDefaultAsync(c => c.Cui == cui));
         }
     }
 }

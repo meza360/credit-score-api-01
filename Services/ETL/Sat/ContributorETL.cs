@@ -43,7 +43,7 @@ namespace Services.ETL.Sat
             .Value?
             .ForEach(c =>
             {
-                //_logger.LogInformation($"ContributorId: {c.CUI}");
+                //_logger.LogInformation($"ContributorId: {c.Cui}");
                 // for each contributor resets list
                 List<Domain.NoSQL.SAT.StatementETL> contributorStatements = new List<Domain.NoSQL.SAT.StatementETL>();
                 List<Domain.NoSQL.SAT.ImpositionETL> contributorImpositions = new List<Domain.NoSQL.SAT.ImpositionETL>();
@@ -100,13 +100,13 @@ namespace Services.ETL.Sat
                     }
                 });
 
-                //_logger.LogDebug($"AccumulatedDebt: {accumulatedDebt} for ContributorId: {c.NIT}");
+                //_logger.LogDebug($"AccumulatedDebt: {accumulatedDebt} for ContributorId: {c.Nit}");
 
                 contributorsTransformed.Add(
                         new Domain.NoSQL.SAT.Contributor
                         {
-                            CUI = c.CUI,
-                            NIT = c.NIT,
+                            Cui = c.Cui,
+                            Nit = c.Nit,
                             FullName = $"{c.FirstName} {c.LastName}",
                             LastUpdate = DateTime.Now,
                             StatementHistoricalRecord = contributorStatements,

@@ -163,7 +163,7 @@ namespace Services.Querying.Sat
                             return Result<Domain.NoSQL.SAT.Contributor>
                             .Success(
                                 await _database.GetCollection<Domain.NoSQL.SAT.Contributor>("contributors")
-                                .FindAsync(c => c.NIT == searchValue).Result.FirstOrDefaultAsync()
+                                .FindAsync(c => c.Nit == searchValue).Result.FirstOrDefaultAsync()
                             );
                         }
                         if (key == "cui")
@@ -173,7 +173,7 @@ namespace Services.Querying.Sat
                             return Result<Domain.NoSQL.SAT.Contributor>
                            .Success(
                                await _database.GetCollection<Domain.NoSQL.SAT.Contributor>("contributors")
-                               .FindAsync(c => c.CUI == searchValue).Result.FirstOrDefaultAsync()
+                               .FindAsync(c => c.Cui == searchValue).Result.FirstOrDefaultAsync()
                             );
                         }
                     }
