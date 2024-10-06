@@ -95,5 +95,15 @@ namespace Services.Querying.EEGSA
             return Result<List<Domain.Relational.EEGSA.Customer>?>.Success(customersWithContractsAndBills);
         }
 
+        public async Task<Result<List<Domain.Relational.EEGSA.Customer>>> ListAllWithContractsL2()
+        {
+            //QueryHandler(req);
+            List<Domain.Relational.EEGSA.Customer> customersWithContractsAndBills = await _context?.Customers?
+                .Include(cust => cust.Contracts)
+                .ThenInclude(cont => cont.Bills)
+                .ToListAsync();
+            return Result<List<Domain.Relational.EEGSA.Customer>?>.Success(customersWithContractsAndBills);
+        }
+
     }
 }

@@ -18,6 +18,7 @@ class Program
 {
     static async Task Main(string[] args)
     {
+
         var host = new HostBuilder()
                 .ConfigureFunctionsWebApplication((env, workerApp) =>
                 {
@@ -58,10 +59,12 @@ class Program
                     services.AddSingleton<Services.Querying.Renap.Citizen>();
                     services.AddSingleton<Services.Querying.Sat.Contributor>();
                     services.AddSingleton<Services.ETL.Sat.ContributorETL>();
+                    services.AddSingleton<Services.ETL.Private.EEGSACustomerETL>();
                     services.AddSingleton<Services.Querying.EEGSA.Customer>();
                     services.AddSingleton<Services.Querying.BancoUnion.Customer>();
                     services.AddLogging(s =>
                     {
+                        s.AddDebug();
                         s.AddAzureWebAppDiagnostics();
                         s.AddConsole();
                     });
