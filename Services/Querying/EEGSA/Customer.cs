@@ -1,9 +1,14 @@
 using System.Collections.Specialized;
 using Domain.Relational.EEGSA;
+using Infra;
 using Microsoft.Azure.Functions.Worker.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.EntityFrameworkCore.Query;
+using Microsoft.Extensions.Logging;
+using MongoDB.Bson.Serialization.Conventions;
+using MongoDB.Driver;
+using Persistence.NoSQL;
 using Persistence.Relational;
 using Services.Core;
 
@@ -12,10 +17,23 @@ namespace Services.Querying.EEGSA
     public class Customer
     {
         private EEGSAContext _context;
+        private readonly ILogger<Services.Querying.EEGSA.Customer> _logger;
+        private readonly CosmosContext _cosmosContext;
+        private readonly IMongoDatabase _database;
+        private readonly string? _databaseName;
 
-        public Customer(Persistence.Relational.EEGSAContext _context)
+        public Customer(Persistence.Relational.EEGSAContext _context, ILogger<Services.Querying.EEGSA.Customer> _logger, CosmosContext _cosmosContext)
         {
             this._context = _context;
+            this._logger = _logger;
+            this._databaseName = CosmosEnv.COSMOS_EEGSA_DB;
+            this._context = _context;
+            var camelCaseConvention = new ConventionPack
+            {
+                new CamelCaseElementNameConvention()
+            };
+            ConventionRegistry.Register("CamelCase", camelCaseConvention, type => true);
+            this._database = _cosmosContext.getCosmosClient().GetDatabase(_databaseName);
         }
 
         public async Task<List<Domain.Relational.EEGSA.Customer>> QueryHandler(HttpRequestData req, DbSet<Domain.Relational.EEGSA.Customer> set)
@@ -103,6 +121,47 @@ namespace Services.Querying.EEGSA
                 .ThenInclude(cont => cont.Bills)
                 .ToListAsync();
             return Result<List<Domain.Relational.EEGSA.Customer>?>.Success(customersWithContractsAndBills);
+        }
+
+        public async Task<Result<Domain.NoSQL.Private.EEGSA.EEGSSACustomer>> ListAllCustomersReport(HttpRequestData req)
+        {
+            string? searchMethod = "";
+            string? searchValue = "";
+            NameValueCollection query = req.Query;
+            foreach (string? key in query.AllKeys)
+            {
+                string[]? values = query.GetValues(key);
+                if (values?.Length > 0)
+                {
+                    foreach (string value in values)
+                    {
+                        System.Console.WriteLine($"{key}: {value}");
+                        if (key == "nit")
+                        {
+                            searchValue = query?.Get("nit");
+                            searchMethod = "nit";
+                            return Result<Domain.NoSQL.Private.EEGSA.EEGSSACustomer>
+                            .Success(
+                                await _database.GetCollection<Domain.NoSQL.Private.EEGSA.EEGSSACustomer>(CosmosEnv.COSMOS_EEGSA_CX_COL)
+                                .FindAsync(c => c.Cui == searchValue).Result.FirstOrDefaultAsync()
+                            );
+                        }
+                        if (key == "cui")
+                        {
+                            searchValue = query?.Get("cui");
+                            searchMethod = "cui";
+                            return Result<Domain.NoSQL.Private.EEGSA.EEGSSACustomer>
+                           .Success(
+                               await _database.GetCollection<Domain.NoSQL.Private.EEGSA.EEGSSACustomer>(CosmosEnv.COSMOS_EEGSA_CX_COL)
+                               .FindAsync(c => c.Cui == searchValue).Result.FirstOrDefaultAsync()
+                            );
+                        }
+                    }
+                }
+            }
+
+            return Result<Domain.NoSQL.Private.EEGSA.EEGSSACustomer>
+                .Failure("No search method provided");
         }
 
     }
