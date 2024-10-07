@@ -19,7 +19,7 @@ namespace Functions.ETL.Bank
 
         [Function(nameof(TransformCustomersToETLScoring))]
         public async Task<HttpResponseData> TransformCustomersToETLScoring(
-            [HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = $"{basePath}/customers/transform")]
+            [HttpTrigger(AuthorizationLevel.Function, "get", Route = $"{basePath}/customers/transform")]
                 HttpRequestData req,
                 FunctionContext context)
         {
