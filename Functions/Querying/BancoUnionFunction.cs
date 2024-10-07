@@ -32,7 +32,7 @@ namespace Functions.Querying
         public async Task<HttpResponseData> GetAllBancoUnionCustomersWithAllProducts(
         [HttpTrigger(AuthorizationLevel.Function, "get", Route = $"{basePath}/customers/credit-type/all")] HttpRequestData req, FunctionContext context)
         {
-            return await HandleResult<List<Domain.Relational.BancoUnion.Customer>>(await _customerService.GetCustomersWithAllProducts(req), req, context);
+            return await HandleResult<List<Domain.Relational.BancoUnion.Customer>?>(await _customerService.GetCustomersWithAllProducts(req), req, context);
         }
     }
 

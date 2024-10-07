@@ -8,13 +8,23 @@ using Microsoft.Azure.Functions.Worker.Http;
 
 namespace Functions.ETL.Bank
 {
-    public class BancoUnionETLFunction
+    public class BancoUnionETLFunction : Core.BaseFunction
     {
-        private const string _basePath = "v1/etl/bank/banco-union";
-        [Function(nameof(Hello))]
-        public IActionResult Hello([HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = $"{_basePath}/hello")] HttpRequestData req)
+        private readonly Services.ETL.Bank.BancoUnion _bankEtlService;
+        private const string basePath = "v1/etl/bank/banco-union";
+        public BancoUnionETLFunction(Services.ETL.Bank.BancoUnion service)
         {
-            return new OkObjectResult("Hello, World!");
+            _bankEtlService = service;
+        }
+
+        [Function(nameof(TransformCustomersToETLScoring))]
+        public async Task<HttpResponseData> TransformCustomersToETLScoring(
+            [HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = $"{basePath}/customers/transform")]
+                HttpRequestData req,
+                FunctionContext context)
+        {
+            return await HandleResult<List<Domain.NoSQL.Bank.BancoUnionCustomerETL>?>
+            (await _bankEtlService.TransformCreditsToMonthlyDeclarations(req), req, context);
         }
     }
 }
