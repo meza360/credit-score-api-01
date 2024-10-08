@@ -49,7 +49,14 @@ namespace Functions.Querying
         public async Task<HttpResponseData> ContributorListReport(
             [HttpTrigger(AuthorizationLevel.Function, "get", Route = $"{basePath}/contributor/credit-score")] HttpRequestData req, FunctionContext context)
         {
-            return await HandleResult<Domain.NoSQL.SAT.Contributor>(await _contributorService.ListAllContributorsReport(req), req, context);
+            return await HandleResult<List<Domain.NoSQL.SAT.Contributor>>(await _contributorService.ListAllContributorsReport(req), req, context);
+        }
+
+        [Function(nameof(ContributorByCuiReport))]
+        public async Task<HttpResponseData> ContributorByCuiReport(
+            [HttpTrigger(AuthorizationLevel.Function, "get", Route = $"{basePath}/contributor/credit-score/report")] HttpRequestData req, FunctionContext context)
+        {
+            return await HandleResult<Domain.NoSQL.SAT.Contributor>(await _contributorService.GetContributorReportByCui(req), req, context);
         }
 
         /// <summary>

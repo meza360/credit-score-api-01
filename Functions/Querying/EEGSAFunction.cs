@@ -37,9 +37,14 @@ namespace Functions.Querying
         public async Task<HttpResponseData> ListAllCustomersWithContractsReport(
            [HttpTrigger(AuthorizationLevel.Function, "get", Route = $"{basePath}/customer/credit-score")] HttpRequestData req, FunctionContext context)
         {
-            return await HandleResult<Domain.NoSQL.Private.EEGSA.EEGSSACustomer>(await _customerService.ListAllCustomersReport(req), req, context);
+            return await HandleResult<List<Domain.NoSQL.Private.EEGSA.EEGSSACustomer>>(await _customerService.ListAllCustomersReport(req), req, context);
         }
 
-
+        [Function(nameof(GetCustomesWithContractsReport))]
+        public async Task<HttpResponseData> GetCustomesWithContractsReport(
+           [HttpTrigger(AuthorizationLevel.Function, "get", Route = $"{basePath}/customer/credit-score/report")] HttpRequestData req, FunctionContext context)
+        {
+            return await HandleResult<Domain.NoSQL.Private.EEGSA.EEGSSACustomer>(await _customerService.GetCustomersReportByCui(req), req, context);
+        }
     }
 }

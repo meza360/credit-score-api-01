@@ -123,7 +123,16 @@ namespace Services.Querying.EEGSA
             return Result<List<Domain.Relational.EEGSA.Customer>?>.Success(customersWithContractsAndBills);
         }
 
-        public async Task<Result<Domain.NoSQL.Private.EEGSA.EEGSSACustomer>> ListAllCustomersReport(HttpRequestData req)
+        public async Task<Result<List<Domain.NoSQL.Private.EEGSA.EEGSSACustomer>>> ListAllCustomersReport(HttpRequestData req)
+        {
+            return Result<List<Domain.NoSQL.Private.EEGSA.EEGSSACustomer>>
+           .Success(
+               await _database.GetCollection<Domain.NoSQL.Private.EEGSA.EEGSSACustomer>(CosmosEnv.COSMOS_EEGSA_CX_COL)
+               .FindAsync(_ => true).Result?.ToListAsync()
+            );
+        }
+
+        public async Task<Result<Domain.NoSQL.Private.EEGSA.EEGSSACustomer>> GetCustomersReportByCui(HttpRequestData req)
         {
             string? searchMethod = "";
             string? searchValue = "";
@@ -162,6 +171,15 @@ namespace Services.Querying.EEGSA
 
             return Result<Domain.NoSQL.Private.EEGSA.EEGSSACustomer>
                 .Failure("No search method provided");
+        }
+
+        public async Task<Result<Domain.NoSQL.Private.EEGSA.EEGSSACustomer>> GetCustomersReportByCui(string cui)
+        {
+            return Result<Domain.NoSQL.Private.EEGSA.EEGSSACustomer>
+           .Success(
+               await _database.GetCollection<Domain.NoSQL.Private.EEGSA.EEGSSACustomer>(CosmosEnv.COSMOS_EEGSA_CX_COL)
+               .FindAsync(c => c.Cui == cui).Result.FirstOrDefaultAsync()
+            );
         }
 
     }
