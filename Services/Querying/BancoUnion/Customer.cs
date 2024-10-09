@@ -152,6 +152,7 @@ namespace Services.Querying.BancoUnion
             return Result<Domain.NoSQL.Bank.BancoUnionCustomerETL>
                 .Failure("No search method provided");
         }
+
         public async Task<Result<Domain.NoSQL.Bank.BancoUnionCustomerETL>?> GetCustomerReportById(string searchMethod, string searchValue)
         {
 

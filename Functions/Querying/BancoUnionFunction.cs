@@ -34,6 +34,13 @@ namespace Functions.Querying
         {
             return await HandleResult<List<Domain.Relational.BancoUnion.Customer>?>(await _customerService.GetCustomersWithAllProducts(req), req, context);
         }
+
+        [Function(nameof(GetBancoUnionCustomerReport))]
+        public async Task<HttpResponseData> GetBancoUnionCustomerReport(
+        [HttpTrigger(AuthorizationLevel.Function, "get", Route = $"{basePath}/customers/credit-score/report")] HttpRequestData req, FunctionContext context)
+        {
+            return await HandleResult<Domain.NoSQL.Bank.BancoUnionCustomerETL?>(await _customerService.GetCustomerReportById(req), req, context);
+        }
     }
 
 }
