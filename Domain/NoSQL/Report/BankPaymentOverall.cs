@@ -7,6 +7,6 @@ namespace Domain.NoSQL.Report
 {
     public class BankPaymentOverall : HistoryObject
     {
-
+        public string Type { get; set; }
     }
 }

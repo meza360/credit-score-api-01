@@ -99,7 +99,8 @@ namespace Services.ETL.Report
                     {
                         Year = loan.Year,
                         Month = loan.Month,
-                        Total = loan.Amount
+                        Total = loan.Amount,
+                        Type = "Loan installment payment"
                     });
                 });
                 bancoUnionCustomer?
@@ -112,7 +113,8 @@ namespace Services.ETL.Report
                     {
                         Year = credit.Year,
                         Month = credit.Month,
-                        Total = credit.Amount
+                        Total = credit.Amount,
+                        Type = "Credit payment"
                     });
                 });
 
