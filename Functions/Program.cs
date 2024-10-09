@@ -60,6 +60,7 @@ class Program
                     services.AddSingleton<Services.Querying.Sat.Contributor>();
                     services.AddSingleton<Services.ETL.Sat.ContributorETL>();
                     services.AddSingleton<Services.ETL.Private.EEGSACustomerETL>();
+                    services.AddSingleton<Services.ETL.Report.ConsolidateService>();
                     services.AddSingleton<Services.ETL.Bank.BancoUnion>();
                     services.AddSingleton<Services.Querying.EEGSA.Customer>();
                     services.AddSingleton<Services.Querying.BancoUnion.Customer>();
