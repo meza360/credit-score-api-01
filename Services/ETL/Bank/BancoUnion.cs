@@ -65,7 +65,8 @@ namespace Services.ETL.Bank
                                      Month = statement.StatementMonth,
                                      Year = statement.StatementYear,
                                      WasDue = statement.StatementOverdue ?? false,
-                                     DaysDue = statement.DaysOverdue ?? 0
+                                     DaysDue = statement.DaysOverdue ?? 0,
+                                     Amount = statement.StatementAmount
                                  });
                              });
                     });
@@ -86,7 +87,8 @@ namespace Services.ETL.Bank
                                      Month = installment.DueDate.Month,
                                      Year = installment.DueDate.Year,
                                      WasDue = installment.InstallmentOverdue ?? false,
-                                     DaysDue = installment.DaysOverdue ?? 0
+                                     DaysDue = installment.DaysOverdue ?? 0,
+                                     Amount = installment.Amount
                                  });
                              });
                     });

@@ -15,5 +15,6 @@ namespace Domain.NoSQL.Bank
         public int Year { get; set; }
         public bool WasDue { get; set; }
         public int DaysDue { get; set; }
+        public double Amount { get; set; }
     }
 }
