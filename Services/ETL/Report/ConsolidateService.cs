@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using System.Threading.Tasks;
 using Infra;
@@ -54,6 +55,17 @@ namespace Services.ETL.Report
             .ToList()
             .ForEach(async (citizen) =>
             {
+                double monthlyOutcomeFromTributaryImpositions = 0;
+                double monthlyOutcomeFromTributaryStatements = 0;
+                double totalOutcomeFromPaymentsTributaryImpositions = 0;
+                double totalOutcomeFromPaymentsTributaryStatements = 0;
+                double totalOutcomeFromCreditPayments = 0;
+                double totalOutcomeFromLoanPayments = 0;
+                double monthlyOutcomeFromBankPayments = 0;
+                int bankCreditPayments = 0;
+                int bankLoanPayments = 0;
+                int tributaryImpositions = 0;
+                int tributaryStatements = 0;
                 Result<Domain.NoSQL.SAT.Contributor?> contributor = await _contributorService.GetContributorReportByCui(citizen.Cui);
                 Result<Domain.NoSQL.Private.EEGSA.EEGSSACustomer?> eegsaCustomer = await _eegsaCustomerService.GetCustomersReportByCui(citizen.Cui);
                 Result<Domain.NoSQL.Bank.BancoUnionCustomerETL?> bancoUnionCustomer = await _bancoUnionCustomerService.GetCustomerReportById("cui", citizen.Cui);
@@ -73,6 +85,22 @@ namespace Services.ETL.Report
                     });
                 });
 
+
+                _logger.LogInformation($"Citizen and contributor {citizen.FirstName} {citizen.LastName}");
+                taxOveralls
+                .GroupBy(t => new { t.Year, t.Month })
+                .ToList()
+                .ForEach(t =>
+                {
+                    tributaryStatements++;
+                    totalOutcomeFromPaymentsTributaryStatements += t.Sum(t => t.Total);
+                    //_logger.LogInformation($"Year: {t.Key.Year}, Month: {t.Key.Month}, Total: {t.Sum(t => t.Total)}");
+                });
+
+                _logger.LogInformation($"Total tributary statements: {tributaryStatements}");
+                monthlyOutcomeFromTributaryStatements = tributaryStatements > 0 ? (totalOutcomeFromPaymentsTributaryStatements / tributaryStatements) : 0;
+
+
                 List<Domain.NoSQL.Report.PurchaseOverall> purchaseOveralls = new List<Domain.NoSQL.Report.PurchaseOverall>();
                 contributor?
                 .Value?
@@ -87,6 +115,21 @@ namespace Services.ETL.Report
                         Total = imposition.PaymentAmount
                     });
                 });
+
+                purchaseOveralls
+                .GroupBy(t => new { t.Year, t.Month })
+                .ToList()
+                .ForEach(t =>
+                {
+                    tributaryImpositions++;
+                    totalOutcomeFromPaymentsTributaryImpositions += t.Sum(t => t.Total);
+                    //_logger.LogInformation($"Year: {t.Key.Year}, Month: {t.Key.Month}, Total: {t.Sum(t => t.Total)}");
+                });
+                _logger.LogInformation($"Total tributary statements: {tributaryStatements}");
+                monthlyOutcomeFromTributaryImpositions = tributaryImpositions > 0 ? (totalOutcomeFromPaymentsTributaryImpositions / tributaryImpositions) : 0;
+                _logger.LogInformation($"Monthly mean outcome from tributary impositions: {monthlyOutcomeFromTributaryImpositions}");
+                _logger.LogInformation($"Monthly mean outcome from tributary statements: {monthlyOutcomeFromTributaryStatements}");
+                _logger.LogInformation($"Total outcome from tributary obligations: {monthlyOutcomeFromTributaryImpositions * monthlyOutcomeFromTributaryStatements}");
 
                 List<Domain.NoSQL.Report.BankPaymentOverall> bankPaymentsOveralls = new List<Domain.NoSQL.Report.BankPaymentOverall>();
                 bancoUnionCustomer?
@@ -103,6 +146,7 @@ namespace Services.ETL.Report
                         Type = "Loan installment payment"
                     });
                 });
+
                 bancoUnionCustomer?
                 .Value?
                 .CreditHistoricalRecord?
@@ -118,6 +162,48 @@ namespace Services.ETL.Report
                     });
                 });
 
+                _logger.LogInformation($"Consolidating report for {citizen.FirstName} {citizen.LastName}");
+                // counts loan installments
+                bankPaymentsOveralls
+                .GroupBy(b => new { b.Year, b.Month, b.Type })
+                .Where(b => b.Key.Type == "Loan installment payment")
+                .Select(b => new Domain.NoSQL.Report.BankPaymentOverall
+                {
+                    Year = b.Key.Year,
+                    Month = b.Key.Month,
+                    Total = b.Sum(t => t.Total),
+                    Type = b.Key.Type
+                })
+                .ToList()
+                .ForEach(b =>
+                {
+                    bankLoanPayments++;
+                    totalOutcomeFromLoanPayments += b.Total;
+                    _logger.LogInformation($"Year: {b.Year}, Month: {b.Month}, Total: {b.Total}");
+                });
+                // counts credit card payments
+                bankPaymentsOveralls
+                .GroupBy(b => new { b.Year, b.Month, b.Type })
+                .Where(b => b.Key.Type == "Credit payment")
+                .Select(b => new Domain.NoSQL.Report.BankPaymentOverall
+                {
+                    Year = b.Key.Year,
+                    Month = b.Key.Month,
+                    Total = b.Sum(t => t.Total),
+                    Type = b.Key.Type
+                })
+                .ToList()
+                .ForEach(b =>
+                {
+                    bankCreditPayments++;
+                    totalOutcomeFromCreditPayments += b.Total;
+                    _logger.LogInformation($"Year: {b.Year}, Month: {b.Month}, Total: {b.Total}");
+                });
+
+                _logger.LogInformation($"Consolidated bank payments for {citizen.FirstName} {citizen.LastName}");
+                monthlyOutcomeFromBankPayments = (bankLoanPayments > 0 ? (totalOutcomeFromLoanPayments / bankLoanPayments) : 0) + (bankCreditPayments > 0 ? (totalOutcomeFromCreditPayments / bankCreditPayments) : 0);
+                _logger.LogInformation($"Monthly outcome from bank payments: {monthlyOutcomeFromBankPayments}");
+
                 Domain.NoSQL.Report.EntityReport consolidatedReport = new Domain.NoSQL.Report.EntityReport
                 {
                     FullName = $"{citizen.FirstName} {citizen.LastName}",
@@ -126,7 +212,7 @@ namespace Services.ETL.Report
                     PrivateOverallScore = "A",
                     BankOverallScore = "A",
                     TaxOverallScore = "A",
-                    MonthlyOutcome = bankPaymentsOveralls.Sum(b => b.Total) + purchaseOveralls.Sum(p => p.Total),
+                    MonthlyOutcome = monthlyOutcomeFromBankPayments + monthlyOutcomeFromTributaryImpositions + monthlyOutcomeFromTributaryStatements,
                     AccumulatedDebt = (contributor?.Value?.AccumulatedDebt ?? 0) + (eegsaCustomer?.Value?.AccumulatedDebt ?? 0) + (bancoUnionCustomer?.Value?.AccumulatedDebt ?? 0),
                     TaxOverallHistory = taxOveralls,
                     PurchaseOverallHistory = purchaseOveralls,
