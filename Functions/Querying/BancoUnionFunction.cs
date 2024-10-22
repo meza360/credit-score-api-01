@@ -20,6 +20,27 @@ namespace Functions.Querying
         {
             return await HandleResult<List<Domain.Relational.BancoUnion.Customer>>(await _customerService.GetCustomers(req), req, context);
         }
+
+        [Function(nameof(GetAllBancoUnionCustomersWithLoans))]
+        public async Task<HttpResponseData> GetAllBancoUnionCustomersWithLoans(
+        [HttpTrigger(AuthorizationLevel.Function, "get", Route = $"{basePath}/customers/credit-type/loans")] HttpRequestData req, FunctionContext context)
+        {
+            return await HandleResult<List<Domain.Relational.BancoUnion.Customer>>(await _customerService.GetCustomersWithLoans(req), req, context);
+        }
+
+        [Function(nameof(GetAllBancoUnionCustomersWithAllProducts))]
+        public async Task<HttpResponseData> GetAllBancoUnionCustomersWithAllProducts(
+        [HttpTrigger(AuthorizationLevel.Function, "get", Route = $"{basePath}/customers/credit-type/all")] HttpRequestData req, FunctionContext context)
+        {
+            return await HandleResult<List<Domain.Relational.BancoUnion.Customer>?>(await _customerService.GetCustomersWithAllProducts(req), req, context);
+        }
+
+        [Function(nameof(GetBancoUnionCustomerReport))]
+        public async Task<HttpResponseData> GetBancoUnionCustomerReport(
+        [HttpTrigger(AuthorizationLevel.Function, "get", Route = $"{basePath}/customers/credit-score/report")] HttpRequestData req, FunctionContext context)
+        {
+            return await HandleResult<Domain.NoSQL.Bank.BancoUnionCustomerETL?>(await _customerService.GetCustomerReportById(req), req, context);
+        }
     }
 
 }

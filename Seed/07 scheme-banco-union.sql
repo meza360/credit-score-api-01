@@ -34,6 +34,7 @@ CREATE TABLE IF NOT EXISTS banco_union.tbl_loan(
     id serial NOT NULL,
     total_value numeric(10,2) NOT NULL,
     installments integer NOT NULL,
+    loan_type varchar(100) NOT NULL DEFAULT 'Personal',
     issue_date date NOT NULL,
     customer_id integer NOT NULL,
     CONSTRAINT pk_loan PRIMARY KEY (id),
@@ -42,6 +43,11 @@ CREATE TABLE IF NOT EXISTS banco_union.tbl_loan(
         ON UPDATE CASCADE
         ON DELETE SET NULL
 );
+
+-- alter table tbl_loan add column loan_type varchar(100) not null
+ALTER TABLE banco_union.tbl_loan ADD COLUMN loan_type varchar(100) NOT NULL DEFAULT 'Personal';
+
+
 
 --Table: tbl_installment
 

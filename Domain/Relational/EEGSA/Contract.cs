@@ -6,6 +6,6 @@ namespace Domain.Relational.EEGSA
         public bool IsActive { get; set; }
         public Customer Customer { get; set; }
         public int CustomerId { get; set; }
-        public List<Bill> Bills { get; set; }
+        public List<Bill>? Bills { get; set; }
     }
 }

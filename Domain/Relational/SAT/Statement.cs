@@ -13,6 +13,6 @@ namespace Domain.Relational.SAT
         public int ContributorId { get; set; }
         public Regime Regime { get; set; }
         public int RegimeId { get; set; }
-        //public Payment Payment { get; set; }
+        public Payment Payment { get; set; }
     }
 }

@@ -23,9 +23,9 @@ public class SatContext : DbContext
             entity.Property(e => e.FirstName).HasColumnName("first_name").IsRequired();
             entity.Property(e => e.LastName).HasColumnName("last_name").IsRequired();
             entity.Property(e => e.DateOfBirth).HasColumnName("date_of_birth").IsRequired();
-            entity.Property(e => e.CUI).HasColumnName("cui").IsRequired();
+            entity.Property(e => e.Cui).HasColumnName("cui").IsRequired();
             entity.Property(e => e.Email).HasColumnName("email");
-            entity.Property(e => e.NIT).HasColumnName("nit").IsRequired();
+            entity.Property(e => e.Nit).HasColumnName("nit").IsRequired();
             entity.Property(e => e.Nationality).HasColumnName("nationality").IsRequired();
             entity.Property(e => e.RegimeId).HasColumnName("regime_id").IsRequired();
         });
@@ -67,20 +67,20 @@ public class SatContext : DbContext
             .WithMany(r => r.Statements)
             .HasForeignKey(s => s.RegimeId);
 
+
         modelBuilder.Entity<Domain.Relational.SAT.Payment>(entity =>
         {
-            entity.Property(e => e.Id).HasColumnName("id");
-            entity.Property(e => e.Id).ValueGeneratedOnAdd();
+            entity.Property(e => e.PaymentId).HasColumnName("payment_id");
+            entity.Property(e => e.PaymentId).ValueGeneratedOnAdd();
             entity.Property(e => e.PaymentAmount).HasColumnName("payment_amount").IsRequired();
             entity.Property(e => e.PaymentDate).HasColumnName("payment_date").IsRequired();
+            entity.Property(e => e.StatementId).HasColumnName("statement_id").IsRequired();
         });
 
         modelBuilder.Entity<Domain.Relational.SAT.Payment>()
             .ToTable("tbl_payment")
-            .HasOne(p => p.Statement);
-        //.WithOne(s => s.Payment);
-        //.WithMany(s => s.Payments)
-        //.HasForeignKey(p => p.StatementId);
+            .HasOne(pay => pay.Statement)
+            .WithOne(stat => stat.Payment);
 
         modelBuilder.Entity<Domain.Relational.SAT.Imposition>(imposition =>
         {

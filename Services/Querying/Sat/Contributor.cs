@@ -58,9 +58,101 @@ namespace Services.Querying.Sat
                 );
         }
 
-        public async Task<Result<Domain.NoSQL.SAT.Contributor>> ListAllContributorsReport(HttpRequestData req)
+        public async Task<Result<List<Domain.Relational.SAT.Contributor>>> ListAllContributorsWithImpositionAndPayments()
         {
-            string? searchMethod = "";
+
+            List<Domain.Relational.SAT.Contributor> contributors = await _context.Contributors?
+                            .Include(c => c.Statements)
+                            .Include(c => c.Impositions)
+                            .ToListAsync();
+
+            //double totalDebt = 0;
+            contributors.ForEach(c =>
+            {
+                c.Statements.ForEach(s =>
+                {
+                    s.Payment = GetPaymentByStatementId(s.StatementId).Result.Value;
+                    /* .Result
+                    .Value
+                    .ForEach(p =>
+                    {
+                        totalDebt += s.StatementAmount - p.PaymentAmount;
+                    }); */
+
+                });
+            });
+
+            return Result<List<Domain.Relational.SAT.Contributor>>
+            .Success(contributors);
+        }
+        public async Task<Result<List<Domain.Relational.SAT.Contributor>>> ListAllContributorsWithImpositionAndPayments(HttpRequestData req)
+        {
+
+            List<Domain.Relational.SAT.Contributor> contributors = await _context.Contributors?
+                            .Include(c => c.Statements)
+                            .Include(c => c.Impositions)
+                            .ToListAsync();
+
+            //double totalDebt = 0;
+            contributors.ForEach(c =>
+            {
+                c.Statements.ForEach(s =>
+                {
+                    s.Payment = GetPaymentByStatementId(s.StatementId).Result.Value;
+                    /* .Result
+                    .Value
+                    .ForEach(p =>
+                    {
+                        totalDebt += s.StatementAmount - p.PaymentAmount;
+                    }); */
+
+                });
+            });
+
+            return Result<List<Domain.Relational.SAT.Contributor>>
+            .Success(contributors);
+        }
+
+        public async Task<Result<Domain.Relational.SAT.Payment>> GetPaymentByStatementId(int statementId)
+        {
+            return Result<Domain.Relational.SAT.Payment>
+            .Success(
+                await _context.Payments.FindAsync(statementId)
+                );
+        }
+
+        public async Task<Result<List<Domain.Relational.SAT.Payment>>> ListAllPaymentsFromStatement(HttpRequestData req)
+        {
+            return Result<List<Domain.Relational.SAT.Payment>>
+            .Success(
+                await _context.Payments?
+                .Include(pay => pay.Statement)
+                .Include(c => c.Statement.Contributor.Impositions)
+                //.Include(stat => stat.Statement.Contributor)
+                .ToListAsync()
+                );
+        }
+
+        public async Task<Result<List<Domain.Relational.SAT.Payment>>> ListAllPaymentsFromStatement(string statementId)
+        {
+            return Result<List<Domain.Relational.SAT.Payment>>
+            .Success(
+                await _context.Payments?
+                .Where(pay => pay.StatementId == int.Parse(statementId))
+                .ToListAsync()
+                );
+        }
+
+        public async Task<Result<List<Domain.NoSQL.SAT.Contributor>?>> ListAllContributorsReport(HttpRequestData req)
+        {
+            return Result<List<Domain.NoSQL.SAT.Contributor>?>
+            .Success(
+                await _database.GetCollection<Domain.NoSQL.SAT.Contributor>(CosmosEnv.COSMOS_SAT_IMPOSITION_COL).FindAsync(_ => true).Result.ToListAsync()
+            );
+        }
+
+        public async Task<Result<Domain.NoSQL.SAT.Contributor>?> GetContributorReportByCui(HttpRequestData req)
+        {
             string? searchValue = "";
             NameValueCollection query = req.Query;
             foreach (string? key in query.AllKeys)
@@ -74,29 +166,34 @@ namespace Services.Querying.Sat
                         if (key == "nit")
                         {
                             searchValue = query?.Get("nit");
-                            searchMethod = "nit";
-                            return Result<Domain.NoSQL.SAT.Contributor>
+                            return Result<Domain.NoSQL.SAT.Contributor?>
                             .Success(
-                                await _database.GetCollection<Domain.NoSQL.SAT.Contributor>("contributors")
-                                .FindAsync(c => c.NIT == searchValue).Result.FirstOrDefaultAsync()
+                                await _database.GetCollection<Domain.NoSQL.SAT.Contributor?>(CosmosEnv.COSMOS_SAT_IMPOSITION_COL)
+                                .FindAsync(c => c.Nit == searchValue).Result?.FirstOrDefaultAsync()
                             );
                         }
                         if (key == "cui")
                         {
                             searchValue = query?.Get("cui");
-                            searchMethod = "cui";
-                            return Result<Domain.NoSQL.SAT.Contributor>
+                            return Result<Domain.NoSQL.SAT.Contributor?>
                            .Success(
-                               await _database.GetCollection<Domain.NoSQL.SAT.Contributor>("contributors")
-                               .FindAsync(c => c.CUI == searchValue).Result.FirstOrDefaultAsync()
+                               await _database.GetCollection<Domain.NoSQL.SAT.Contributor?>(CosmosEnv.COSMOS_SAT_IMPOSITION_COL)
+                               .FindAsync(c => c.Cui == searchValue).Result?.FirstOrDefaultAsync()
                             );
                         }
                     }
                 }
             }
 
-            return Result<Domain.NoSQL.SAT.Contributor>
-            .Failure("No search method provided");
+            return Result<Domain.NoSQL.SAT.Contributor>.Failure("No search method provided");
+        }
+
+        public async Task<Result<Domain.NoSQL.SAT.Contributor>?> GetContributorReportByCui(string cui)
+        {
+            return Result<Domain.NoSQL.SAT.Contributor?>
+                        .Success(
+                            await _database.GetCollection<Domain.NoSQL.SAT.Contributor?>(CosmosEnv.COSMOS_SAT_IMPOSITION_COL)
+                            .FindAsync(c => c.Cui == cui).Result?.FirstOrDefaultAsync());
         }
     }
 }

@@ -3,8 +3,8 @@ namespace Domain.Relational.SAT
     public class Contributor
     {
         public int Id { get; set; }
-        public string CUI { get; set; }
-        public string NIT { get; set; }
+        public string Cui { get; set; }
+        public string Nit { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string? Email { get; set; }

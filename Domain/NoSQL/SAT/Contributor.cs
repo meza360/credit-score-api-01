@@ -12,8 +12,8 @@ namespace Domain.NoSQL.SAT
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]
         public string? Id { get; set; }
-        public string CUI { get; set; }
-        public string NIT { get; set; }
+        public string Cui { get; set; }
+        public string Nit { get; set; }
         public string FullName { get; set; }
         public DateTime LastUpdate { get; set; }
         public string TaxScore { get; set; }

@@ -20,5 +20,12 @@ namespace Functions.Querying
             return await HandleResult<List<Domain.Relational.Renap.Citizen>>(await _citizenService.ListAll(req), req, context);
         }
 
+        [Function(nameof(CitizenByCui))]
+        public async Task<HttpResponseData> CitizenByCui(
+            [HttpTrigger(AuthorizationLevel.Function, "get", Route = $"{basePath}/citizen/filter")] HttpRequestData req, FunctionContext context)
+        {
+            return await HandleResult<Domain.Relational.Renap.Citizen>(await _citizenService.GetCitizenByCui(req), req, context);
+        }
+
     }
 }

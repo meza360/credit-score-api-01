@@ -16,7 +16,7 @@ namespace Services.ETL.Sat
     public class ContributorETL
     {
         private readonly Services.Querying.Sat.Contributor _contributorService;
-        private readonly ILogger<ContributorETL> logger;
+        private readonly ILogger<ContributorETL> _logger;
         private readonly CosmosContext _cosmosContext;
         private readonly IMongoDatabase _database;
         private readonly string _databaseName;
@@ -24,7 +24,7 @@ namespace Services.ETL.Sat
         public ContributorETL(Services.Querying.Sat.Contributor contributorService, ILogger<ContributorETL> logger, CosmosContext cosmosContext)
         {
             this._contributorService = contributorService;
-            this.logger = logger;
+            this._logger = logger;
             this._cosmosContext = cosmosContext;
             this._databaseName = CosmosEnv.COSMOS_SAT_DB;
             var camelCaseConvention = new ConventionPack
@@ -38,12 +38,12 @@ namespace Services.ETL.Sat
         public async Task<Result<List<Domain.NoSQL.SAT.Contributor>?>> TransformToMonthlyImpositions()
         {
             List<Domain.NoSQL.SAT.Contributor>? contributorsTransformed = new List<Domain.NoSQL.SAT.Contributor>();
-            _contributorService.ListAllContributorsWithImposition()
+            _contributorService.ListAllContributorsWithImpositionAndPayments()
             .Result?
             .Value?
             .ForEach(c =>
             {
-                logger.LogInformation($"ContributorId: {c.CUI}");
+                //_logger.LogInformation($"ContributorId: {c.Cui}");
                 // for each contributor resets list
                 List<Domain.NoSQL.SAT.StatementETL> contributorStatements = new List<Domain.NoSQL.SAT.StatementETL>();
                 List<Domain.NoSQL.SAT.ImpositionETL> contributorImpositions = new List<Domain.NoSQL.SAT.ImpositionETL>();
@@ -55,18 +55,17 @@ namespace Services.ETL.Sat
                     .ToList()
                     .ForEach((s) =>
                     {
-                        //logger.LogInformation($"ContributorId: {s.StatementId}");
+                        //logger.LodDebug($"ContributorId: {s.StatementId}");
                         contributorStatements.Add(
                                 new Domain.NoSQL.SAT.StatementETL
                                 {
                                     Year = s.StatementYear,
                                     Month = s.StatementMonth,
                                     WasDue = s.StatementOverdue,
-                                    DaysOverdue = 1
+                                    DaysOverdue = 1,
+                                    StatementAmount = s.StatementAmount
                                 }
                             );
-
-
                     });
 
 
@@ -88,15 +87,31 @@ namespace Services.ETL.Sat
                     );
                 });
 
+
+                double accumulatedDebt = 0;//c.Impositions.Sum(i => i.PaymentAmount);
+                c.Statements.ForEach(s =>
+                {
+                    if (s.StatementOverdue)
+                    {
+                        //_logger.LogDebug($"StatementId: {s.StatementId} is Overdue");
+                        //_logger.LogDebug($"StatementAmount: {s.StatementAmount}");
+                        //_logger.LogDebug($"PaymentAmount: {s.Payment?.PaymentAmount ?? 0}");
+                        accumulatedDebt += s.StatementAmount - (s.Payment?.PaymentAmount ?? 0);
+                    }
+                });
+
+                //_logger.LogDebug($"AccumulatedDebt: {accumulatedDebt} for ContributorId: {c.Nit}");
+
                 contributorsTransformed.Add(
                         new Domain.NoSQL.SAT.Contributor
                         {
-                            CUI = c.CUI,
-                            NIT = c.NIT,
+                            Cui = c.Cui,
+                            Nit = c.Nit,
                             FullName = $"{c.FirstName} {c.LastName}",
                             LastUpdate = DateTime.Now,
                             StatementHistoricalRecord = contributorStatements,
-                            ImpositionHistoricalRecord = contributorImpositions
+                            ImpositionHistoricalRecord = contributorImpositions,
+                            AccumulatedDebt = accumulatedDebt
                         }
                     );
             });

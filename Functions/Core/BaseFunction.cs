@@ -14,7 +14,7 @@ namespace Functions.Core;
 public class BaseFunction
 {
 
-    protected async Task<HttpResponseData> HandleResult<T>(Result<T> result, HttpRequestData req, FunctionContext context)
+    protected async Task<HttpResponseData> HandleResult<T>(Result<T?> result, HttpRequestData req, FunctionContext context)
     {
         var s = new JsonSerializerSettings
         {
@@ -28,20 +28,20 @@ public class BaseFunction
         {
             var response = req.CreateResponse(HttpStatusCode.InternalServerError);
             //response.Headers.Add("Content-Type", "application/json");
-            await response.WriteAsJsonAsync<Result<T>>(result, serializer);
+            await response.WriteAsJsonAsync<Result<T?>?>(result, serializer);
             return response;
         }
         if (result.IsSuccess && result.Value != null)
         {
             var response = req.CreateResponse(HttpStatusCode.OK);
             //response.Headers.Add("Content-Type", "application/json");
-            await response.WriteAsJsonAsync<Result<T>>(result, serializer);
+            await response.WriteAsJsonAsync<Result<T?>>(result, serializer);
             return response;
         }
         if (result.IsSuccess && result.Value == null)
         {
             var response = req.CreateResponse(HttpStatusCode.NotFound);
-            await response.WriteAsJsonAsync<Result<T>>(result, serializer);
+            await response.WriteAsJsonAsync<Result<T?>>(result, serializer);
             return response;
         }
         return req.CreateResponse(HttpStatusCode.BadRequest);

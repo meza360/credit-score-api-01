@@ -10,8 +10,8 @@ namespace Domain.Relational.EEGSA
         public int DaysOverdue { get; set; }
         public Contract Contract { get; set; }
         public int ContractId { get; set; }
-        public decimal BillAmount { get; set; }
-        public List<Payment> Payments { get; set; }
+        public double BillAmount { get; set; }
+        public List<Payment>? Payments { get; set; }
         //public int Payment { get; set; }
     }
 }
