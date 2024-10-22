@@ -209,6 +209,8 @@ namespace Services.ETL.Report
                     FullName = $"{citizen.FirstName} {citizen.LastName}",
                     Cui = citizen.Cui,
                     Nit = contributor?.Value?.Nit ?? citizen.Cui,
+                    DateOfBirth = citizen.DateOfBirth,
+                    Nationality = citizen.Nationality,
                     PrivateOverallScore = "A",
                     BankOverallScore = "A",
                     TaxOverallScore = "A",
