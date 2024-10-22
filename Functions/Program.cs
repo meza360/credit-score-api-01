@@ -64,6 +64,7 @@ class Program
                     services.AddSingleton<Services.ETL.Bank.BancoUnion>();
                     services.AddSingleton<Services.Querying.EEGSA.Customer>();
                     services.AddSingleton<Services.Querying.BancoUnion.Customer>();
+                    services.AddSingleton<Services.Querying.Reports.EntityReportService>();
                     services.AddLogging(s =>
                     {
                         s.AddDebug();
